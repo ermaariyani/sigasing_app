@@ -1,5 +1,6 @@
 <?php
 if (isset($_GET['id'])) {
+
     $database = new Database();
     $db = $database->getConnection();
 
@@ -13,14 +14,15 @@ if (isset($_GET['id'])) {
 ?>
         <section class="content-header">
             <?php
-            if (isset($_POST['button_create'])) {
+            if (isset($_POST['button_update'])) {
 
                 $database = new Database();
                 $db = $database->getConnection();
 
-                $validateSQL = "SELECT * FROM lokasi WHERE nama_lokasi=?";
+                $validateSQL = "SELECT * FROM lokasi WHERE nama_lokasi=? AND id!=?";
                 $stmt = $db->prepare($validateSQL);
                 $stmt->bindParam(1, $_POST['nama_lokasi']);
+                $stmt->bindParam(2, $_POST['id']);
                 $stmt->execute();
 
                 if ($stmt->rowCount() > 0) {
@@ -32,16 +34,17 @@ if (isset($_GET['id'])) {
                     </div>
             <?php
                 } else {
-                    $insertSQL = "INSERT INTO lokasi SET nama_lokasi=?";
+                    $updateSQL = "UPDATE lokasi SET nama_lokasi=? WHERE id=?";
 
-                    $stmt = $db->prepare($insertSQL);
+                    $stmt = $db->prepare($updateSQL);
                     $stmt->bindParam(1, $_POST['nama_lokasi']);
+                    $stmt->bindParam(2, $_POST['id']);
                     if ($stmt->execute()) {
                         $_SESSION['hasil'] = true;
-                        $_SESSION['pesan'] = "Berhasil Simpan Data";
+                        $_SESSION['pesan'] = "Berhasil Ubah Data";
                     } else {
                         $_SESSION['hasil'] = false;
-                        $_SESSION['pesan'] = "Gagal Simpan Data";
+                        $_SESSION['pesan'] = "Gagal Ubah Data";
                     }
 
 
